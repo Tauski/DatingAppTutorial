@@ -1,9 +1,15 @@
 <div class="row">
     <div class="col-2" *ngFor="let photo of member.photos">
-        <img src="{{photo.url}}" alt="{{photo.url}}" class="img-thumbnail p-1">
+        <img src="{{photo.url}}" alt="{{photo.url}}" class="img-thumbnail p-1"
+            [class.not-approved]="!photo.isApproved">
+
+        <div class="text-center img-text" *ngIf="!photo.isApproved">
+            <span class="text-danger">Awaiting approval</span>
+        </div>
+
         <div class="text-center">
             <button 
-                [disabled]="photo.isMain"
+                [disabled]="photo.isMain || !photo.isApproved"
                 (click)="setMainPhoto(photo)"
                 [ngClass]='photo.isMain ? "btn-success active" : "btn-outline-success"'
                 class="btn btn-sm">
@@ -17,12 +23,9 @@
     </div>
 </div>
 
-<div class="row mt-3">
- 
+<div class="row mt-3"> 
     <div class="col-md-3">
-
         <h3>Select files</h3>
-
         <div ng2FileDrop
              [ngClass]="{'nv-file-over': hasBaseDropzoneOver}"
              (fileOver)="fileOverBase($event)"

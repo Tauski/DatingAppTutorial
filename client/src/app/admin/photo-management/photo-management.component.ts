@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { NgxGalleryImage } from '@kolkov/ngx-gallery';
+import { Member } from 'src/app/_models/member';
+import { Photo } from 'src/app/_models/photo';
+import { User } from 'src/app/_models/user';
+import { AdminService } from 'src/app/_services/admin.service';
 
 @Component({
   selector: 'app-photo-management',
@@ -6,10 +11,30 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./photo-management.component.css']
 })
 export class PhotoManagementComponent implements OnInit {
+  photos: Photo[];
 
-  constructor() { }
+  constructor(private adminService: AdminService) { }
 
   ngOnInit(): void {
+    this.getPhotosForApproval();
+  }
+
+  getPhotosForApproval(){
+    this.adminService.getPhotosForApproval().subscribe(photos => {
+      this.photos = photos;
+    })
+  }
+
+  approvePhoto(photoId: number){
+    this.adminService.approvePhoto(photoId).subscribe(photo => {
+      this.photos.splice(this.photos.findIndex(p => p.id === photoId),1);
+    })
+  }
+
+  rejectPhoto(photoId: number){
+    this.adminService.rejectPhoto(photoId).subscribe(() => {
+      this.photos.splice(this.photos.findIndex(p => p.id === photoId), 1);
+      })
   }
 
 }
